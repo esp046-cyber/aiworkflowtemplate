@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <title>AI Workflow Automation Proposal</title>
+    <link rel="manifest" href="#" id="manifest-placeholder">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .action-bar {
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.98);
+            padding: 15px 20px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        .problem {
+            background: #f8f9ff;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        .scope ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .scope li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .scope li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            overflow-x: auto;
+            display: block;
+        }
+        @media (min-width: 768px) {
+            table {
+                display: table;
+            }
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9em;
+        }
+        tr:hover {
+            background: #f8f9ff;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .total-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .total-box h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .total-box .amount {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+        .total-box .payment-terms {
+            font-size: 0.9em;
+            opacity: 0.95;
+            line-height: 1.6;
+            text-align: left;
+            margin-top: 15px;
+        }
+        .revisions {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        .revisions strong {
+            color: #856404;
+        }
+        .editable {
+            background: #fffacd;
+            padding: 2px 4px;
+            border-radius: 2px;
+            cursor: text;
+            border-bottom: 2px dashed #667eea;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                border-radius: 4px;
+            }
+            .header h1 {
+                font-size: 1.5em;
+            }
+            .header p {
+                font-size: 0.9em;
+            }
+            .content {
+                padding: 20px 15px;
+            }
+            .section {
+                padding: 15px;
+            }
+            .section h2 {
+                font-size: 1.1em;
+            }
+            .total-box .amount {
+                font-size: 1.8em;
+            }
+            th, td {
+                padding: 8px 6px;
+                font-size: 0.85em;
+            }
+            .action-bar {
+                padding: 10px;
+            }
+            .btn {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .action-bar {
+                display: none;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+        .install-prompt {
+            background: #4CAF50;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            display: none;
+            cursor: pointer;
+        }
+        .install-prompt.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="install-prompt" id="installPrompt">
+        📱 Install this app for offline access - Tap here
+    </div>
+    
+    <div class="container">
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="downloadPDF()">📄 Download PDF</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+            <button class="btn btn-secondary" onclick="shareProposal()">📤 Share</button>
+        </div>
+        <div class="header">
+            <h1>AI Workflow Automation Proposal</h1>
+            <p>Intelligent Solutions for Modern Business</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>Problem Statement</h2>
+                <div class="problem">
+                    <span class="editable" contenteditable="true">Your manual data processing workflow requires 40+ hours weekly and creates bottlenecks that delay customer response times by 72 hours.</span>
+                </div>
+            </div>
+
+            <div class="section scope">
+                <h2>Project Scope - AI Modules</h2>
+                <ul>
+                    <li contenteditable="true">Intelligent Document Processing (IDP) - OCR + NLP extraction for invoices and contracts</li>
+                    <li contenteditable="true">AI-Powered Email Classifier - Automatic routing and priority tagging using GPT-4</li>
+                    <li contenteditable="true">Workflow Orchestration Engine - Custom automation rules with 15+ app integrations</li>
+                    <li contenteditable="true">Predictive Analytics Dashboard - Real-time insights and forecasting models</li>
+                    <li contenteditable="true">Chatbot Interface - Customer-facing AI assistant with knowledge base integration</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>Project Timeline & Milestones</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Milestone</th>
+                            <th>Deliverable</th>
+                            <th>Date (<span contenteditable="true">EST</span>)</th>
+                            <th>Payment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Phase 1</strong></td>
+                            <td contenteditable="true">Requirements & Architecture Design</td>
+                            <td contenteditable="true">Dec 15, 2025</td>
+                            <td><strong>30%</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 2</strong></td>
+                            <td contenteditable="true">Core AI Modules Development</td>
+                            <td contenteditable="true">Jan 20, 2026</td>
+                            <td><strong>30%</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 3</strong></td>
+                            <td contenteditable="true">Integration & Testing</td>
+                            <td contenteditable="true">Feb 10, 2026</td>
+                            <td><strong>25%</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 4</strong></td>
+                            <td contenteditable="true">Deployment & Training</td>
+                            <td contenteditable="true">Feb 28, 2026</td>
+                            <td><strong>15%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>Investment & Payment Terms</h2>
+                <div class="total-box">
+                    <h3>Total Project Cost</h3>
+                    <div class="amount"><span contenteditable="true">$45,000</span> <span contenteditable="true">USD</span></div>
+                    <div class="payment-terms">
+                        <p><strong>Payment Schedule:</strong></p>
+                        <p>• 30% upfront deposit upon contract signing</p>
+                        <p>• 30% upon completion of Phase 2</p>
+                        <p>• 25% upon completion of Phase 3</p>
+                        <p>• 15% upon final delivery and sign-off</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Revision Policy</h2>
+                <div class="revisions">
+                    <strong>Included Revisions:</strong> This proposal includes <strong>2 rounds of revisions</strong> per milestone at no additional cost. Additional revision requests beyond this limit will be billed at an hourly rate of <span contenteditable="true">$150/hour</span>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Service Worker Registration (only works on HTTPS/localhost)
+        if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+            const swCode = `
+                const CACHE_NAME = 'ai-proposal-v1';
+                
+                self.addEventListener('install', event => {
+                    self.skipWaiting();
+                });
+
+                self.addEventListener('activate', event => {
+                    event.waitUntil(clients.claim());
+                });
+
+                self.addEventListener('fetch', event => {
+                    event.respondWith(
+                        caches.open(CACHE_NAME).then(cache => {
+                            return cache.match(event.request).then(response => {
+                                const fetchPromise = fetch(event.request).then(networkResponse => {
+                                    cache.put(event.request, networkResponse.clone());
+                                    return networkResponse;
+                                });
+                                return response || fetchPromise;
+                            });
+                        })
+                    );
+                });
+            `;
+            
+            try {
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl).then(() => {
+                    console.log('✓ Service Worker active');
+                }).catch(err => {
+                    console.log('SW not available (requires HTTPS)');
+                });
+            } catch (e) {
+                console.log('SW not supported in this environment');
+            }
+        }
+
+        // Manifest JSON
+        const manifestJson = {
+            "name": "AI Workflow Proposal",
+            "short_name": "AI Proposal",
+            "description": "AI Workflow Automation Proposal Template",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#667eea",
+            "theme_color": "#667eea",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%23667eea' width='512' height='512'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='256' fill='white'%3E🤖%3C/text%3E%3C/svg%3E",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestJson)], { type: 'application/json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        document.getElementById('manifest-placeholder').setAttribute('href', manifestUrl);
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        document.getElementById('installPrompt').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.remove('show');
+            }
+        });
+
+        // PDF Download Function
+        async function downloadPDF() {
+            const element = document.querySelector('.container');
+            const actionBar = document.querySelector('.action-bar');
+            actionBar.style.display = 'none';
+            
+            try {
+                window.print();
+            } catch (error) {
+                alert('Please use browser print > Save as PDF');
+            }
+            
+            setTimeout(() => {
+                actionBar.style.display = 'flex';
+            }, 1000);
+        }
+
+        // Share Function - Fallback for iframe restrictions
+        async function shareProposal() {
+            const url = window.location.href;
+            const title = 'AI Workflow Automation Proposal';
+            const text = 'Check out this AI workflow automation proposal';
+
+            // Try Web Share API first (works in top-level contexts)
+            if (navigator.share && window.self === window.top) {
+                try {
+                    await navigator.share({ title, text, url });
+                    return;
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        console.log('Share cancelled or not supported');
+                    }
+                }
+            }
+
+            // Fallback: Copy to clipboard
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(url);
+                    showNotification('✓ Link copied to clipboard!');
+                } else {
+                    // Old clipboard method
+                    const textArea = document.createElement('textarea');
+                    textArea.value = url;
+                    textArea.style.position = 'fixed';
+                    textArea.style.opacity = '0';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('✓ Link copied!');
+                }
+            } catch (err) {
+                // Final fallback: show URL in prompt
+                prompt('Copy this link:', url);
+            }
+        }
+
+        // Notification helper
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.textContent = message;
+            notif.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => {
+                notif.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notif.remove(), 300);
+            }, 2500);
+        }
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Auto-save edits to localStorage
+        document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+            const key = el.className || el.tagName;
+            const saved = localStorage.getItem(key);
+            if (saved) el.textContent = saved;
+
+            el.addEventListener('blur', () => {
+                localStorage.setItem(key, el.textContent);
+            });
+        });
+    </script>
+</body>
+</html>
